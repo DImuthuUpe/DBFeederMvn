@@ -51,8 +51,6 @@
             <groupId>ojdbc</groupId>
             <artifactId>ojdbc</artifactId>
             <version>7</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/ojdbc7.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
