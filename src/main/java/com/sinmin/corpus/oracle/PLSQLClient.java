@@ -74,15 +74,14 @@ public class PLSQLClient {
         ArrayDescriptor desc = ArrayDescriptor.createDescriptor("WORDARRAY", dbConnection);
         ARRAY wordArray = new ARRAY(desc, dbConnection, wordList);
         stmt.setArray(2, wordArray);
-        stmt.executeUpdate();
-        ARRAY output = stmt.getARRAY(1);
+        try{
+            stmt.executeUpdate();
+            ARRAY output = stmt.getARRAY(1);
 
-        BigDecimal[] values = (BigDecimal[]) output.getArray();
-
-        //for (int i = 0; i < values.length; i++)
-        //System.out.println("val " + wordList[i] + " = '" + values[i] + "'");
-
-        stmt.close();
+            BigDecimal[] values = (BigDecimal[]) output.getArray();
+        }finally{
+            stmt.close();
+        }
         //dbConnection.close();
     }
 
@@ -96,15 +95,15 @@ public class PLSQLClient {
         ArrayDescriptor desc = ArrayDescriptor.createDescriptor("WORDARRAY", dbConnection);
         ARRAY wordArray = new ARRAY(desc, dbConnection, wordList);
         stmt.setArray(2, wordArray);
-        stmt.executeUpdate();
-        ARRAY output = stmt.getARRAY(1);
+        BigDecimal[] values;
+        try{
+            stmt.executeUpdate();
+            ARRAY output = stmt.getARRAY(1);
 
-        BigDecimal[] values = (BigDecimal[]) output.getArray();
-
-        //for (int i = 0; i < values.length; i++)
-        //System.out.println("val " + wordList[i] + " = '" + values[i] + "'");
-
-        stmt.close();
+            values = (BigDecimal[]) output.getArray();
+        }finally{
+            stmt.close();
+        }
         //dbConnection.close();
         return values;
 
@@ -269,15 +268,15 @@ public class PLSQLClient {
         ARRAY wordArray2 = new ARRAY(desc, dbConnection, array2);
         stmt.setArray(2, wordArray1);
         stmt.setArray(3, wordArray2);
-        stmt.executeUpdate();
-        ARRAY output = stmt.getARRAY(1);
+        BigDecimal[] values;
+        try{
+            stmt.executeUpdate();
+            ARRAY output = stmt.getARRAY(1);
 
-        BigDecimal[] values = (BigDecimal[]) output.getArray();
-
-        //for (int i = 0; i < values.length; i++)
-        //System.out.println("val " + wordList[i] + " = '" + values[i] + "'");
-
-        stmt.close();
+            values = (BigDecimal[]) output.getArray();
+        }finally{
+            stmt.close();
+        }
         //dbConnection.close();
         return values;
 
@@ -303,16 +302,15 @@ public class PLSQLClient {
         ARRAY wordArray2 = new ARRAY(desc, dbConnection, array2);
         stmt.setArray(2, wordArray1);
         stmt.setArray(3, wordArray2);
-        stmt.executeUpdate();
-        ARRAY output = stmt.getARRAY(1);
+        BigDecimal[] values;
+        try{
+            stmt.executeUpdate();
+            ARRAY output = stmt.getARRAY(1);
 
-        BigDecimal[] values = (BigDecimal[]) output.getArray();
-
-        //for (int i = 0; i < values.length; i++)
-        //System.out.println("val " + wordList[i] + " = '" + values[i] + "'");
-
-        stmt.close();
-        //dbConnection.close();
+            values = (BigDecimal[]) output.getArray();
+        }finally{
+            stmt.close();
+        }
         return values;
 
     }
@@ -337,15 +335,18 @@ public class PLSQLClient {
         ARRAY wordArray2 = new ARRAY(desc, dbConnection, array2);
         stmt.setArray(2, wordArray1);
         stmt.setArray(3, wordArray2);
-        stmt.executeUpdate();
-        ARRAY output = stmt.getARRAY(1);
 
-        BigDecimal[] values = (BigDecimal[]) output.getArray();
+        try{
+            stmt.executeUpdate();
+            ARRAY output = stmt.getARRAY(1);
 
-        //for (int i = 0; i < values.length; i++)
-        //System.out.println("val " + wordList[i] + " = '" + values[i] + "'");
+            BigDecimal[] values = (BigDecimal[]) output.getArray();
 
-        stmt.close();
+            //for (int i = 0; i < values.length; i++)
+            //System.out.println("val " + wordList[i] + " = '" + values[i] + "'");
+        }finally{
+            stmt.close();
+        }
         //dbConnection.close();
     }
 
@@ -419,15 +420,15 @@ public class PLSQLClient {
         stmt.setArray(2, wordArray1);
         stmt.setArray(3, wordArray2);
         stmt.setArray(4, wordArray3);
-        stmt.executeUpdate();
-        ARRAY output = stmt.getARRAY(1);
 
-        BigDecimal[] values = (BigDecimal[]) output.getArray();
+        try{
+            stmt.executeUpdate();
+            ARRAY output = stmt.getARRAY(1);
 
-        //for (int i = 0; i < values.length; i++)
-        //System.out.println("val " + wordList[i] + " = '" + values[i] + "'");
-
-        stmt.close();
+            BigDecimal[] values = (BigDecimal[]) output.getArray();
+        }finally{
+            stmt.close();
+        }
         //dbConnection.close();
     }
 
@@ -455,16 +456,15 @@ public class PLSQLClient {
         stmt.setArray(2, wordArray1);
         stmt.setArray(3, wordArray2);
         stmt.setArray(4, wordArray3);
-        stmt.executeUpdate();
-        ARRAY output = stmt.getARRAY(1);
+        BigDecimal[] values;
+        try{
+            stmt.executeUpdate();
+            ARRAY output = stmt.getARRAY(1);
 
-        BigDecimal[] values = (BigDecimal[]) output.getArray();
-
-        //for (int i = 0; i < values.length; i++)
-        //System.out.println("val " + wordList[i] + " = '" + values[i] + "'");
-
-        stmt.close();
-        //dbConnection.close();
+            values = (BigDecimal[]) output.getArray();
+        }finally{
+            stmt.close();
+        }
         return values;
 
     }
@@ -493,16 +493,14 @@ public class PLSQLClient {
         stmt.setArray(2, wordArray1);
         stmt.setArray(3, wordArray2);
         stmt.setArray(4, wordArray3);
-        stmt.executeUpdate();
-        ARRAY output = stmt.getARRAY(1);
-
-        BigDecimal[] values = (BigDecimal[]) output.getArray();
-
-        //for (int i = 0; i < values.length; i++)
-        //System.out.println("val " + wordList[i] + " = '" + values[i] + "'");
-
-        stmt.close();
-        //dbConnection.close();
+        BigDecimal[] values;
+        try{
+            stmt.executeUpdate();
+            ARRAY output = stmt.getARRAY(1);
+            values = (BigDecimal[]) output.getArray();
+        }finally{
+            stmt.close();
+        }
         return values;
 
     }
@@ -614,16 +612,20 @@ public class PLSQLClient {
         ARRAY day_arr = new ARRAY(desc7, dbConnection, day);
         stmt.setArray(8, day_arr);
 
+        try{
+            stmt.executeUpdate();
+            ARRAY output = stmt.getARRAY(1);
 
-        stmt.executeUpdate();
-        ARRAY output = stmt.getARRAY(1);
+            BigDecimal[] values = (BigDecimal[]) output.getArray();
 
-        BigDecimal[] values = (BigDecimal[]) output.getArray();
-
-        logger.info("Articles " + values.length);
-        for (int i = 0; i < values.length; i++) {
-            articles.get(i).id = values[i].longValue();
+            logger.info("Articles " + values.length);
+            for (int i = 0; i < values.length; i++) {
+                articles.get(i).id = values[i].longValue();
+            }
+        }finally{
+            stmt.close();
         }
+
 
     }
 
@@ -664,18 +666,22 @@ public class PLSQLClient {
         ARRAY p_arr = new ARRAY(desc3, dbConnection, posArr);
         stmt.setArray(4, p_arr);
 
-        stmt.executeUpdate();
-        ARRAY output = stmt.getARRAY(1);
+        try{
+            stmt.executeUpdate();
+            ARRAY output = stmt.getARRAY(1);
 
-        BigDecimal[] values = (BigDecimal[]) output.getArray();
+            BigDecimal[] values = (BigDecimal[]) output.getArray();
 
-        logger.info("Sentences " + values.length);
-        int sentsId = 0;
-        for (int i = 0; i < articles.size(); i++) {
-            for (int j = 0; j < articles.get(i).sentences.size(); j++) {
-                articles.get(i).sentences.get(j).id = values[sentsId].longValue();
-                sentsId++;
+            logger.info("Sentences " + values.length);
+            int sentsId = 0;
+            for (int i = 0; i < articles.size(); i++) {
+                for (int j = 0; j < articles.get(i).sentences.size(); j++) {
+                    articles.get(i).sentences.get(j).id = values[sentsId].longValue();
+                    sentsId++;
+                }
             }
+        }finally{
+            stmt.close();
         }
 
     }
@@ -722,7 +728,11 @@ public class PLSQLClient {
         ARRAY p_arr = new ARRAY(desc3, dbConnection, posArr);
         stmt.setArray(4, p_arr);
 
-        stmt.executeUpdate();
+        try{
+            stmt.executeUpdate();
+        }finally{
+            stmt.close();
+        }
 
     }
 
@@ -773,8 +783,11 @@ public class PLSQLClient {
         ARRAY p_arr = new ARRAY(desc3, dbConnection, posArr);
         stmt.setArray(4, p_arr);
 
-        stmt.executeUpdate();
-
+        try{
+            stmt.executeUpdate();
+        }finally{
+            stmt.close();
+        }
 
     }
 
@@ -826,7 +839,11 @@ public class PLSQLClient {
         ARRAY p_arr = new ARRAY(desc3, dbConnection, posArr);
         stmt.setArray(4, p_arr);
 
-        stmt.executeUpdate();
+        try{
+            stmt.executeUpdate();
+        }finally{
+            stmt.close();
+        }
     }
 
 
