@@ -403,6 +403,7 @@ public class PLSQLClient {
         long[][] bigrams = getAllBigrams();
         BigDecimal[] ids = getBigramIDList(bigrams);
         HashSet<Bigram> missingBigrams = new HashSet<>();
+        logger.info("step 1");
         for (int i = 0; i < ids.length; i++) {
             if (ids[i].intValue() == 0) {
                 Bigram misB = new Bigram(bigrams[i][0], bigrams[i][1]);
@@ -414,13 +415,17 @@ public class PLSQLClient {
 
             }
         }
+        logger.info("step 2");
         Bigram[] newBigrams = new Bigram[missingBigrams.size()];
         newBigrams = missingBigrams.toArray(newBigrams);
         addBigrams(newBigrams);
+        logger.info("step 3");
         ids = getBigramIDList(newBigrams);
+        logger.info("step 4");
         for (int i = 0; i < ids.length; i++) {
             bigram_map.put(newBigrams[i], ids[i].longValue());
         }
+        logger.info("step 5");
         logger.info("Bigrams created");
         //System.out.println(bigrams.length+","+missingBigrams.size());
     }
