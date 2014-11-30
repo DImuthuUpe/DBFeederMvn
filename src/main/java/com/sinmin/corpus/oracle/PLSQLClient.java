@@ -281,6 +281,8 @@ public class PLSQLClient {
     public BigDecimal[] getBigramIDList(long bigramList[][]) throws SQLException {
         getDBConnection();
 
+        logger.info("Mark 1");
+
         long[] array1 = new long[bigramList.length];
         long[] array2 = new long[bigramList.length];
 
@@ -288,25 +290,29 @@ public class PLSQLClient {
             array1[i] = bigramList[i][0];
             array2[i] = bigramList[i][1];
         }
-
+        logger.info("Mark 2");
         OracleCallableStatement stmt = (OracleCallableStatement) dbConnection.prepareCall("begin ? := getBigrams(?,?); end;");
         stmt.registerOutParameter(1, OracleTypes.ARRAY, "IDARRAY");
 
-
+        logger.info("Mark 2");
         ArrayDescriptor desc = ArrayDescriptor.createDescriptor("NUM_ARRAY", dbConnection);
         ARRAY wordArray1 = new ARRAY(desc, dbConnection, array1);
         ARRAY wordArray2 = new ARRAY(desc, dbConnection, array2);
         stmt.setArray(2, wordArray1);
         stmt.setArray(3, wordArray2);
         BigDecimal[] values;
+        logger.info("Mark 3");
         try{
             stmt.executeUpdate();
+            logger.info("Mark 4");
             ARRAY output = stmt.getARRAY(1);
-
+            logger.info("Mark 5");
             values = (BigDecimal[]) output.getArray();
+            logger.info("Mark 6");
         }finally{
             stmt.close();
         }
+        logger.info("Mark 7");
         //dbConnection.close();
         return values;
 
