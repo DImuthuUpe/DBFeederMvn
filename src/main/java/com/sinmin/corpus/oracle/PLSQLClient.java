@@ -381,6 +381,7 @@ public class PLSQLClient {
     }
 
     public long[][] getAllBigrams() {
+        logger.info("path 1");
         ArrayList<long[]> big = new ArrayList<>();
         for (int i = 0; i < articles.size(); i++) {
             for (int j = 0; j < articles.get(i).sentences.size(); j++) {
@@ -393,8 +394,10 @@ public class PLSQLClient {
                 }
             }
         }
+        logger.info("path 2");
         long[][] bigrams = new long[big.size()][2];
         bigrams = big.toArray(bigrams);
+        logger.info("path 3");
         return bigrams;
     }
 
