@@ -39,7 +39,7 @@ public class Controller {
         Folder e = null;
         try
         {
-            FileInputStream fileIn = new FileInputStream("/Users/dimuthuupeksha/filetree.ser");
+            FileInputStream fileIn = new FileInputStream("filetree.ser");
             ObjectInputStream in = new ObjectInputStream(fileIn);
             e = (Folder) in.readObject();
             in.close();
