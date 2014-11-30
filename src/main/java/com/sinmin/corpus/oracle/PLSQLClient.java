@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by dimuthuupeksha on 9/19/14.
@@ -219,7 +221,35 @@ public class PLSQLClient {
     }
 
     private String[] splitToWords(String sentence) {
-        return sentence.split("[\u0020]");
+        String raw[]= sentence.split("[\u0020\u002C]");
+        ArrayList<String> w = new ArrayList<>();
+        for (int i=0;i<raw.length;i++){
+            String trimmed = unicodeTrim(raw[i]);
+            if(trimmed!=null&&!trimmed.equals("")){
+                w.add(trimmed);
+            }
+        }
+        String newWords[] = new String[w.size()];
+        newWords = w.toArray(newWords);
+        return newWords;
+
+    }
+
+    public String unicodeTrim(String s) {
+        int len = s.length();
+        int st = 0;
+
+        while ((st < len)
+                && (s.charAt(st) == '\u00a0' || s.charAt(st) == ' ' || s
+                .charAt(st) == '\u0020')) {
+            st++;
+        }
+        while ((st < len)
+                && (s.charAt(len - 1) == '\u00a0' || s.charAt(st) == ' ' || s
+                .charAt(st) == '\u0020')) {
+            len--;
+        }
+        return ((st > 0) || (len < s.length())) ? s.substring(st, len) : s;
     }
 
     public void createDictionary(String file) throws Exception {
@@ -569,9 +599,9 @@ public class PLSQLClient {
         String subcat[] = new String[articles.size()];
 
         for (int i = 0; i < articles.size(); i++) {
-            day[i] = articles.get(i).day;
-            month[i] = articles.get(i).month;
-            year[i] = articles.get(i).year;
+            day[i] = filterInt(articles.get(i).day)+"";
+            month[i] = filterInt(articles.get(i).month)+"";
+            year[i] = filterInt(articles.get(i).year)+"";
             topic[i] = articles.get(i).topic;
             author[i] = articles.get(i).author;
             cat[i] = articles.get(i).category;
@@ -601,6 +631,7 @@ public class PLSQLClient {
         stmt.setArray(5, subcat_arr);
 
         ArrayDescriptor desc5 = ArrayDescriptor.createDescriptor("NUM_ARRAY", dbConnection);
+
         ARRAY year_arr = new ARRAY(desc5, dbConnection, year);
         stmt.setArray(6, year_arr);
 
@@ -627,6 +658,26 @@ public class PLSQLClient {
         }
 
 
+    }
+
+    public int filterInt(String number){
+        if(number!=null&&number.length()>0){
+            final ArrayList<Integer> result = new ArrayList<Integer>();
+            // in real life define this as a static member of the class.
+            // defining integers -123, 12 etc as matches.
+            final Pattern integerPattern = Pattern.compile("(\\-?\\d+)");
+            final Matcher matched = integerPattern.matcher(number);
+            while (matched.find()) {
+                result.add(Integer.valueOf(matched.group()));
+            }
+            if(result.size()>0){
+                return result.get(0);
+            }else{
+                return -1;
+            }
+        }else{
+            return -1;
+        }
     }
 
     public void addSentences() throws SQLException {
@@ -886,7 +937,7 @@ public class PLSQLClient {
 
             //flushCache();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
             logger.error(ex);
         }
         /*Set<Long> keySet = times.keySet();
