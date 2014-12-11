@@ -6,8 +6,11 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
 
@@ -77,17 +80,17 @@ public class CassandraClient {
 				int monthInt = 0;
 
 				try {
-					yearInt = Integer.parseInt(trim(year));
+					yearInt = filterInt(year);
 				} catch (Exception e) {
 
 				}
 				try {
-					dayInt = Integer.parseInt(trim(day));
+					dayInt = filterInt(day);
 				} catch (Exception e) {
 
 				}
 				try {
-					monthInt = Integer.parseInt(trim(month));
+					monthInt = filterInt(month);
 				} catch (Exception e) {
 
 				}
@@ -100,7 +103,7 @@ public class CassandraClient {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
+				category = category.charAt(0) + "";
 				String[] sentences = content.split("[\u002E\u003F\u0021]");
 				for (int i = 0; i < sentences.length; i++) {
 					String[] words = sentences[i].split("[\u0020\u002C]");
@@ -892,6 +895,26 @@ public class CassandraClient {
 		cl.connect("127.0.0.1");
 		cl.feed("/home/chamila/semester7/fyp/20_Million_Words/out/1.xml");
 		System.out.println("dddddddd");
+	}
+	
+	public int filterInt(String number){
+        if(number!=null&&number.length()>0){
+            final ArrayList<Integer> result = new ArrayList<Integer>();
+            // in real life define this as a static member of the class.
+            // defining integers -123, 12 etc as matches.
+            final Pattern integerPattern = Pattern.compile("(\\-?\\d+)");
+            final Matcher matched = integerPattern.matcher(number);
+            while (matched.find()) {
+                result.add(Integer.valueOf(matched.group()));
+            }
+            if(result.size()>0){
+                return result.get(0);
+            }else{
+                return -1;
+            }
+        }else{
+            return -1;
+        }
 	}
 
 }
