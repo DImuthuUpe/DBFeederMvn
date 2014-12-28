@@ -5,6 +5,8 @@ import com.sinmin.corpus.oracle.bean.ArticleBean;
 import com.sinmin.corpus.oracle.bean.Bigram;
 import com.sinmin.corpus.oracle.bean.SentenceBean;
 import com.sinmin.corpus.oracle.bean.Trigram;
+import corpus.sinhala.SinhalaTokenizer;
+import corpus.sinhala.SinhalaVowelLetterFixer;
 import oracle.jdbc.OracleCallableStatement;
 import oracle.jdbc.OracleTypes;
 import oracle.sql.ARRAY;
@@ -22,10 +24,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.math.BigDecimal;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,6 +49,7 @@ public class PLSQLClient {
     HashMap<String, Long> word_id_map = new HashMap<>();
     HashMap<Bigram, Long> bigram_map = new HashMap<>();
     HashMap<Trigram, Long> trigram_map = new HashMap<>();
+    SinhalaTokenizer tokenizer = new SinhalaTokenizer();
 
 
     private static Connection getDBConnection() {
@@ -217,11 +217,18 @@ public class PLSQLClient {
 
     private String[] splitToSentences(String article) {
 
-        return article.split("[\u002E]");
+        LinkedList<String> list =  tokenizer.splitSentences(article);
+        String[] sentences = new String[list.size()];
+        sentences = list.toArray(sentences);
+        SinhalaVowelLetterFixer vowelLetterFixer = new SinhalaVowelLetterFixer();
+        for(int i=0;i<sentences.length;i++){
+            sentences[i] = vowelLetterFixer.fixText(sentences[i],true);
+        }
+        return sentences;
     }
 
     private String[] splitToWords(String sentence) {
-        String raw[]= sentence.split("[\u0020\u002C]");
+        /*String raw[]= sentence.split("[\u0020\u002C]");
         ArrayList<String> w = new ArrayList<>();
         for (int i=0;i<raw.length;i++){
             String trimmed = unicodeTrim(raw[i]);
@@ -231,8 +238,11 @@ public class PLSQLClient {
         }
         String newWords[] = new String[w.size()];
         newWords = w.toArray(newWords);
-        return newWords;
-
+        return newWords;*/
+        LinkedList<String> list = tokenizer.splitWords(sentence);
+        String[] words = new String[list.size()];
+        words = list.toArray(words);
+        return words;
     }
 
     public String unicodeTrim(String s) {

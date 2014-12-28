@@ -113,7 +113,7 @@ public class Controller {
             fileTree= new Folder("root",null);
         }
         Scanner("/home/maduranga/crawler/data");
-        //Scanner("/Users/dimuthuupeksha/Documents/Academic/FYP/temp/out");
+        //Scanner("/Users/dimuthuupeksha/Documents/Academic/FYP/dataFolder");
 
 
     }
