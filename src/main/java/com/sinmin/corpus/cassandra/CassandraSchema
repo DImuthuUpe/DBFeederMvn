@@ -1,0 +1,529 @@
+CREATE KEYSPACE corpus
+  WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 3 };
+
+CREATE TABLE corpus.word_time_category_frequency (
+    id bigint,
+    word varchar,
+    year int,
+    category varchar,
+    frequency int,
+    PRIMARY KEY(word,year, category)
+);
+
+CREATE TABLE corpus.word_frequency (
+    id bigint,
+    word varchar,
+    frequency int,
+    PRIMARY KEY(word)
+);
+CREATE TABLE corpus.word_time_frequency (
+    id bigint,
+    word varchar,
+    year int,
+    frequency int,
+    PRIMARY KEY(word,year)
+);
+
+CREATE TABLE corpus.word_category_frequency (
+    id bigint,
+    word varchar,
+    category varchar,
+    frequency int,
+    PRIMARY KEY(word, category)
+);
+
+CREATE TABLE corpus.bigram_time_category_frequency (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    year int,
+    category varchar,
+    frequency int,
+    PRIMARY KEY(word1,word2,year, category)
+);
+
+CREATE TABLE corpus.bigram_frequency (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    frequency int,
+    PRIMARY KEY(word1,word2)
+);
+
+CREATE TABLE corpus.bigram_time_frequency (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    year int,
+    frequency int,
+    PRIMARY KEY(word1,word2,year)
+);
+
+CREATE TABLE corpus.bigram_category_frequency (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    category varchar,
+    frequency int,
+    PRIMARY KEY(word1,word2, category)
+);
+
+
+CREATE TABLE corpus.trigram_time_category_frequency (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    word3 varchar,
+    year int,
+    category varchar,
+    frequency int,
+    PRIMARY KEY(word1,word2,word3,year, category)
+);
+
+CREATE TABLE corpus.trigram_frequency (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    word3 varchar,
+    frequency int,
+    PRIMARY KEY(word1,word2,word3)
+);
+
+CREATE TABLE corpus.trigram_time_frequency (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    word3 varchar,
+    year int,
+    frequency int,
+    PRIMARY KEY(word1,word2,word3,year)
+);
+
+CREATE TABLE corpus.trigram_category_frequency (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    word3 varchar,
+    category varchar,
+    frequency int,
+    PRIMARY KEY(word1,word2,word3,category)
+);
+
+CREATE TABLE corpus.word_time_category_ordered_frequency (
+    id bigint,
+    word varchar,
+    year int,
+    category varchar,
+    frequency int,
+    PRIMARY KEY((year, category),frequency,word)
+);
+
+CREATE TABLE corpus.word_time_ordered_frequency (
+    id bigint,
+    word varchar,
+    year int,
+    frequency int,
+    PRIMARY KEY(year,frequency,word)
+);
+
+CREATE TABLE corpus.word_category_ordered_frequency (
+    id bigint,
+    word varchar,
+    category varchar,
+    frequency int,
+    PRIMARY KEY(category,frequency,word)
+);
+
+
+CREATE TABLE corpus.bigram_time_category_ordered_frequency (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    year int,
+    category varchar,
+    frequency int,
+    PRIMARY KEY((year, category),frequency,word1,word2)
+);
+
+CREATE TABLE corpus.bigram_time_ordered_frequency (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    year int,
+    frequency int,
+    PRIMARY KEY(year,frequency,word1,word2)
+);
+
+CREATE TABLE corpus.bigram_category_ordered_frequency (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    category varchar,
+    frequency int,
+    PRIMARY KEY(category,frequency,word1,word2)
+);
+
+
+CREATE TABLE corpus.trigram_time_category_ordered_frequency (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    word3 varchar,
+    year int,
+    category varchar,
+    frequency int,
+    PRIMARY KEY((year, category),frequency,word1,word2,word3)
+);
+
+CREATE TABLE corpus.trigram_time_ordered_frequency (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    word3 varchar,
+    year int,
+    category varchar,
+    frequency int,
+    PRIMARY KEY(year,frequency,word1,word2,word3)
+);
+
+CREATE TABLE corpus.trigram_category_ordered_frequency (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    word3 varchar,
+    category varchar,
+    frequency int,
+    PRIMARY KEY(category,frequency,word1,word2,word3)
+);
+
+CREATE TABLE corpus.word_usage (
+    id bigint,
+    word varchar,
+    sentence varchar,
+    postname text,
+    url varchar,
+    date timestamp,
+    author varchar,
+    PRIMARY KEY(word,date,id)
+);
+
+CREATE TABLE corpus.word_year_usage (
+    id bigint,
+    word varchar,
+    year int,
+    sentence varchar,
+    postname text,
+    url varchar,
+    date timestamp,
+    author varchar,
+    PRIMARY KEY((word,year),date,id)
+);
+
+CREATE TABLE corpus.word_category_usage (
+    id bigint,
+    word varchar,
+    category varchar,
+    sentence varchar,
+    postname text,
+    url varchar,
+    date timestamp,
+    author varchar,
+    PRIMARY KEY((word,category),date,id)
+);
+
+CREATE TABLE corpus.word_year_category_usage (
+    id bigint,
+    word varchar,
+    year int,
+    category varchar,
+    sentence varchar,
+    postname text,
+    url varchar,
+    date timestamp,
+    author varchar,
+    PRIMARY KEY((word,year,category),date,id)
+);
+
+CREATE TABLE corpus.bigram_usage (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    sentence varchar,
+    postname text,
+    url varchar,
+    date timestamp,
+    author varchar,
+    PRIMARY KEY((word1,word2),date,id)
+);
+
+CREATE TABLE corpus.bigram_year_usage (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    year int,
+    sentence varchar,
+    postname text,
+    url varchar,
+    date timestamp,
+    author varchar,
+    PRIMARY KEY((word1,word2,year),date,id)
+);
+
+CREATE TABLE corpus.bigram_category_usage (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    category varchar,
+    sentence varchar,
+    postname text,
+    url varchar,
+    date timestamp,
+    author varchar,
+    PRIMARY KEY((word1,word2,category),date,id)
+);
+
+CREATE TABLE corpus.bigram_year_category_usage (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    year int,
+    category varchar,
+    sentence varchar,
+    postname text,
+    url varchar,
+    date timestamp,
+    author varchar,
+    PRIMARY KEY((word1,word2,year,category),date,id)
+);
+CREATE TABLE corpus.trigram_usage (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    word3 varchar,
+    sentence varchar,
+    postname text,
+    url varchar,
+    date timestamp,
+    author varchar,
+    PRIMARY KEY((word1,word2,word3),date,id)
+);
+
+CREATE TABLE corpus.trigram_year_usage (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    word3 varchar,
+    year int,
+    sentence varchar,
+    postname text,
+    url varchar,
+    date timestamp,
+    author varchar,
+    PRIMARY KEY((word1,word2,word3,year),date,id)
+);
+
+CREATE TABLE corpus.trigram_category_usage (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    word3 varchar,
+    category varchar,
+    sentence varchar,
+    postname text,
+    url varchar,
+    date timestamp,
+    author varchar,
+    PRIMARY KEY((word1,word2,word3,category),date,id)
+);
+
+CREATE TABLE corpus.trigram_year_category_usage (
+    id bigint,
+    word1 varchar,
+    word2 varchar,
+    word3 varchar,
+    year int,
+    category varchar,
+    sentence varchar,
+    postname text,
+    url varchar,
+    date timestamp,
+    author varchar,
+    PRIMARY KEY((word1,word2,word3,year,category),date,id)
+);
+
+CREATE TABLE corpus.word_pos_frequency (
+    id bigint,
+    word varchar,
+    position int,
+    frequency int,
+    PRIMARY KEY(position, frequency, word)
+);
+
+CREATE TABLE corpus.word_pos_id (
+    id bigint,
+    word varchar,
+    position int,
+    frequency int,
+    PRIMARY KEY(position, word)
+);
+
+CREATE TABLE corpus.word_inv_pos_frequency (
+    id bigint,
+    word varchar,
+    inv_position int,
+    frequency int,
+    PRIMARY KEY(inv_position, frequency, word)
+);
+
+CREATE TABLE corpus.word_inv_pos_id (
+    id bigint,
+    word varchar,
+    inv_position int,
+    frequency int,
+    PRIMARY KEY(inv_position, word)
+);
+
+CREATE TABLE corpus.word_pos_year_frequency (
+    id bigint,
+    word varchar,
+    position int,
+    frequency int,
+    year int,
+    PRIMARY KEY((position,year), frequency, word)
+);
+
+CREATE TABLE corpus.word_pos_year_id (
+    id bigint,
+    word varchar,
+    position int,
+    frequency int,
+    year int,
+    PRIMARY KEY(position, year, word)
+);
+
+CREATE TABLE corpus.word_inv_pos_year_frequency (
+    id bigint,
+    word varchar,
+    inv_position int,
+    frequency int,
+    year int,
+    PRIMARY KEY((inv_position,year), frequency, word)
+);
+
+CREATE TABLE corpus.word_inv_pos_year_id (
+    id bigint,
+    word varchar,
+    inv_position int,
+    frequency int,
+    year int,
+    PRIMARY KEY(inv_position, year, word)
+);
+
+CREATE TABLE corpus.word_pos_category_frequency (
+    id bigint,
+    word varchar,
+    position int,
+    frequency int,
+    category varchar,
+    PRIMARY KEY((position,category), frequency, word)
+);
+
+CREATE TABLE corpus.word_pos_category_id (
+    id bigint,
+    word varchar,
+    position int,
+    frequency int,
+    category varchar,
+    PRIMARY KEY(position, category, word)
+);
+
+CREATE TABLE corpus.word_inv_pos_category_frequency (
+    id bigint,
+    word varchar,
+    inv_position int,
+    frequency int,
+    category varchar,
+    PRIMARY KEY((inv_position,category), frequency, word)
+);
+
+CREATE TABLE corpus.word_inv_pos_category_id (
+    id bigint,
+    word varchar,
+    inv_position int,
+    frequency int,
+    category varchar,
+    PRIMARY KEY(inv_position, category, word)
+);
+
+CREATE TABLE corpus.word_pos_year_category_frequency (
+    id bigint,
+    word varchar,
+    position int,
+    frequency int,
+    category varchar,
+    year int,
+    PRIMARY KEY((position,year,category), frequency, word)
+);
+
+CREATE TABLE corpus.word_pos_year_category_id (
+    id bigint,
+    word varchar,
+    position int,
+    frequency int,
+    category varchar,
+    year int,
+    PRIMARY KEY(position, year, category, word)
+);
+
+CREATE TABLE corpus.word_inv_pos_year_category_frequency (
+    id bigint,
+    word varchar,
+    inv_position int,
+    frequency int,
+    category varchar,
+    year int,
+    PRIMARY KEY((inv_position,year,category), frequency, word)
+);
+
+CREATE TABLE corpus.word_inv_pos_year_category_id (
+    id bigint,
+    word varchar,
+    inv_position int,
+    frequency int,
+    category varchar,
+    year int,
+    PRIMARY KEY(inv_position, year,category, word)
+);
+
+alter table corpus.word_time_category_ordered_frequency with GC_GRACE_SECONDS = 3600;
+
+alter table corpus.word_time_ordered_frequency with GC_GRACE_SECONDS = 3600;
+
+alter table corpus.word_category_ordered_frequency with GC_GRACE_SECONDS = 3600;
+
+alter table corpus.bigram_time_category_ordered_frequency with GC_GRACE_SECONDS = 3600;
+
+alter table corpus.bigram_time_ordered_frequency with GC_GRACE_SECONDS = 3600;
+
+alter table corpus.bigram_category_ordered_frequency with GC_GRACE_SECONDS = 3600;
+
+alter table corpus.trigram_time_category_ordered_frequency with GC_GRACE_SECONDS = 3600;
+
+alter table corpus.trigram_time_ordered_frequency with GC_GRACE_SECONDS = 3600;
+
+alter table corpus.trigram_category_ordered_frequency with GC_GRACE_SECONDS = 3600;
+
+alter table corpus.word_pos_frequency with GC_GRACE_SECONDS = 3600;
+
+alter table corpus.word_inv_pos_frequency with GC_GRACE_SECONDS = 3600;
+
+alter table corpus.word_pos_year_frequency with GC_GRACE_SECONDS = 3600;
+
+alter table corpus.word_inv_pos_year_frequency with GC_GRACE_SECONDS = 3600;
+
+alter table corpus.word_pos_category_frequency with GC_GRACE_SECONDS = 3600;
+
+
+alter table corpus.word_inv_pos_category_frequency with GC_GRACE_SECONDS = 3600;
+
+alter table corpus.word_inv_pos_year_category_frequency with GC_GRACE_SECONDS = 3600;

@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,12 +28,16 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Statement;
 
+import corpus.sinhala.SinhalaTokenizer;
+
+
 public class CassandraClient {
 
 	private Cluster cluster;
 	private Session session;
 	PreparedStatement statement;
 	long wordcount,bigramcount,trigramcount;
+	SinhalaTokenizer tokenizer = new SinhalaTokenizer();
 
 	public void connect(String node) {
 		wordcount = 0;bigramcount=0;trigramcount=0;
@@ -104,9 +109,9 @@ public class CassandraClient {
 					e.printStackTrace();
 				}
 				category = category.charAt(0) + "";
-				String[] sentences = content.split("[\u002E\u003F\u0021]");
+				String[] sentences = this.splitToSentences(content);
 				for (int i = 0; i < sentences.length; i++) {
-					String[] words = sentences[i].split("[\u0020\u002C]");
+					String[] words = this.splitToWords(sentences[i]);
 
 					for (int j = 0; j < words.length; j++) {
 						if (words[j].length() > 0) {
@@ -916,5 +921,35 @@ public class CassandraClient {
             return -1;
         }
 	}
+	
+	  private String[] splitToSentences(String article) {
+
+	        LinkedList<String> list =  tokenizer.splitSentences(article);
+	        String[] sentences = new String[list.size()];
+	        sentences = list.toArray(sentences);
+	        corpus.sinhala.SinhalaVowelLetterFixer vowelLetterFixer = new corpus.sinhala.SinhalaVowelLetterFixer();
+	        for(int i=0;i<sentences.length;i++){
+	            sentences[i] = vowelLetterFixer.fixText(sentences[i],true);
+	        }
+	        return sentences;
+	    }
+
+	    private String[] splitToWords(String sentence) {
+	        /*String raw[]= sentence.split("[\u0020\u002C]");
+	        ArrayList<String> w = new ArrayList<>();
+	        for (int i=0;i<raw.length;i++){
+	            String trimmed = unicodeTrim(raw[i]);
+	            if(trimmed!=null&&!trimmed.equals("")){
+	                w.add(trimmed);
+	            }
+	        }
+	        String newWords[] = new String[w.size()];
+	        newWords = w.toArray(newWords);
+	        return newWords;*/
+	        LinkedList<String> list = tokenizer.splitWords(sentence);
+	        String[] words = new String[list.size()];
+	        words = list.toArray(words);
+	        return words;
+	    }
 
 }
