@@ -204,7 +204,7 @@ CREATE TABLE corpus.word_usage (
     url varchar,
     date timestamp,
     author varchar,
-    PRIMARY KEY(word,date,id)
+    PRIMARY KEY(word,date,sentence)
 );
 
 CREATE TABLE corpus.word_year_usage (
@@ -216,7 +216,7 @@ CREATE TABLE corpus.word_year_usage (
     url varchar,
     date timestamp,
     author varchar,
-    PRIMARY KEY((word,year),date,id)
+    PRIMARY KEY((word,year),date,sentence)
 );
 
 CREATE TABLE corpus.word_category_usage (
@@ -228,7 +228,7 @@ CREATE TABLE corpus.word_category_usage (
     url varchar,
     date timestamp,
     author varchar,
-    PRIMARY KEY((word,category),date,id)
+    PRIMARY KEY((word,category),date,sentence)
 );
 
 CREATE TABLE corpus.word_year_category_usage (
@@ -241,7 +241,7 @@ CREATE TABLE corpus.word_year_category_usage (
     url varchar,
     date timestamp,
     author varchar,
-    PRIMARY KEY((word,year,category),date,id)
+    PRIMARY KEY((word,year,category),date,sentence)
 );
 
 CREATE TABLE corpus.bigram_usage (
@@ -253,7 +253,7 @@ CREATE TABLE corpus.bigram_usage (
     url varchar,
     date timestamp,
     author varchar,
-    PRIMARY KEY((word1,word2),date,id)
+    PRIMARY KEY((word1,word2),date,sentence)
 );
 
 CREATE TABLE corpus.bigram_year_usage (
@@ -266,7 +266,7 @@ CREATE TABLE corpus.bigram_year_usage (
     url varchar,
     date timestamp,
     author varchar,
-    PRIMARY KEY((word1,word2,year),date,id)
+    PRIMARY KEY((word1,word2,year),date,sentence)
 );
 
 CREATE TABLE corpus.bigram_category_usage (
@@ -279,7 +279,7 @@ CREATE TABLE corpus.bigram_category_usage (
     url varchar,
     date timestamp,
     author varchar,
-    PRIMARY KEY((word1,word2,category),date,id)
+    PRIMARY KEY((word1,word2,category),date,sentence)
 );
 
 CREATE TABLE corpus.bigram_year_category_usage (
@@ -293,7 +293,7 @@ CREATE TABLE corpus.bigram_year_category_usage (
     url varchar,
     date timestamp,
     author varchar,
-    PRIMARY KEY((word1,word2,year,category),date,id)
+    PRIMARY KEY((word1,word2,year,category),date,sentence)
 );
 CREATE TABLE corpus.trigram_usage (
     id bigint,
@@ -305,7 +305,7 @@ CREATE TABLE corpus.trigram_usage (
     url varchar,
     date timestamp,
     author varchar,
-    PRIMARY KEY((word1,word2,word3),date,id)
+    PRIMARY KEY((word1,word2,word3),date,sentence)
 );
 
 CREATE TABLE corpus.trigram_year_usage (
@@ -319,7 +319,7 @@ CREATE TABLE corpus.trigram_year_usage (
     url varchar,
     date timestamp,
     author varchar,
-    PRIMARY KEY((word1,word2,word3,year),date,id)
+    PRIMARY KEY((word1,word2,word3,year),date,sentence)
 );
 
 CREATE TABLE corpus.trigram_category_usage (
@@ -333,7 +333,7 @@ CREATE TABLE corpus.trigram_category_usage (
     url varchar,
     date timestamp,
     author varchar,
-    PRIMARY KEY((word1,word2,word3,category),date,id)
+    PRIMARY KEY((word1,word2,word3,category),date,sentence)
 );
 
 CREATE TABLE corpus.trigram_year_category_usage (
@@ -348,7 +348,7 @@ CREATE TABLE corpus.trigram_year_category_usage (
     url varchar,
     date timestamp,
     author varchar,
-    PRIMARY KEY((word1,word2,word3,year,category),date,id)
+    PRIMARY KEY((word1,word2,word3,year,category),date,sentence)
 );
 
 CREATE TABLE corpus.word_pos_frequency (

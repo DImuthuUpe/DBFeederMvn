@@ -869,8 +869,11 @@ public class CassandraClient {
 						}
 					}
 					
+					
 				}
-			}
+				
+			}System.out.println(wordcount );
+			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
