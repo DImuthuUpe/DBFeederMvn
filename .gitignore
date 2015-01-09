@@ -1,3 +1,5 @@
 target/*
 out/*
 .idea/*
+DBFeederMvn.iml
+log4j-application.log
