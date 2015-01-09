@@ -16,6 +16,14 @@ public class Controller {
     private Folder fileTree;
     private PLSQLClient oracleClient = new PLSQLClient();
 
+    public Folder getFileTree() {
+        return fileTree;
+    }
+
+    public void setFileTree(Folder fileTree) {
+        this.fileTree = fileTree;
+    }
+
     public void serializeFileTree(){
         try
         {
@@ -107,20 +115,21 @@ public class Controller {
 
     }
 
-    public Controller(){
+    public void startFeeding(){
         fileTree = deserializeFileree();
         if(fileTree==null){
             fileTree= new Folder("root",null);
         }
         Scanner("/home/maduranga/crawler/data");
+    }
+
+    public Controller(){
         //Scanner("/Users/dimuthuupeksha/Documents/Academic/FYP/dataFolder");
-
-
     }
 
     public static void main(String args[]){
         Controller con = new Controller();
-
+        con.startFeeding();
     }
 
 }
