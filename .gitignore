@@ -3,4 +3,7 @@ out/*
 .idea/*
 DBFeederMvn.iml
 log4j-application.log
-
+DBFeederMvn.ipr
+DBFeederMvn.iml
+DBFeederMvn.iws
+oracleBatchTime.txt
