@@ -13,7 +13,7 @@ Install Oracle jar to local maven repository
 
 mvn install:install-file -Dfile=ojdbc7.jar -DgroupId=ojdbc -DartifactId=ojdbc -Dversion=7 -Dpackaging=jar
 
-ojdbc7.jar can be found from src/main/resources folder
+ojdbc7.jar can be found from lib folder
 
 <h5>Running Instructions</h5>
 
