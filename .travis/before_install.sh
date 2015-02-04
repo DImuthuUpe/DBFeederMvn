@@ -7,5 +7,8 @@ cd corpus.sinhala.tools
 echo "Building corpus tools"
 mvn clean install
 echo "Adding Oracle Dependencies"
+cd ..
+ls
+tree
 cp ../src/main/resources/ojdbc7.jar .
 mvn install:install-file -Dfile=ojdbc7.jar -DgroupId=ojdbc -DartifactId=ojdbc -Dversion=7 -Dpackaging=jar
