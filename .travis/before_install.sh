@@ -8,5 +8,5 @@ echo "Building corpus tools"
 mvn clean install
 echo "Adding Oracle Dependencies"
 cd ..
-cp ../src/main/resources/ojdbc7.jar .
+cp ../lib/ojdbc7.jar .
 mvn install:install-file -Dfile=ojdbc7.jar -DgroupId=ojdbc -DartifactId=ojdbc -Dversion=7 -Dpackaging=jar
