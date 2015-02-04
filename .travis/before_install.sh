@@ -5,4 +5,5 @@ echo "Cloning corpus.sinhala.tools"
 git clone https://github.com/madurangasiriwardena/corpus.sinhala.tools
 cd corpus.sinhala.tools
 echo "Building corpus tools"
+pwd
 mvn clean install
