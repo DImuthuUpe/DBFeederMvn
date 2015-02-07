@@ -35,13 +35,13 @@ public class PLSQLClient {
     final static Logger logger = Logger.getLogger(PLSQLClient.class);
 
     private static final String DB_DRIVER = "oracle.jdbc.driver.OracleDriver";
-    //private static final String DB_CONNECTION = "jdbc:oracle:thin:@//localhost:1521/PDB1";
-    //private static final String DB_USER = "sinmin";
-    //private static final String DB_PASSWORD = "sinmin";
-
-    private static final String DB_CONNECTION = "jdbc:oracle:thin:@//192.248.15.239:1522/corpus.sinmin.com";
+    private static final String DB_CONNECTION = "jdbc:oracle:thin:@//localhost:1521/PDB1";
     private static final String DB_USER = "sinmin";
-    private static final String DB_PASSWORD = "Sinmin1234";
+    private static final String DB_PASSWORD = "sinmin";
+
+    //private static final String DB_CONNECTION = "jdbc:oracle:thin:@//192.248.15.239:1522/corpus.sinmin.com";
+    //private static final String DB_USER = "sinmin";
+    //private static final String DB_PASSWORD = "Sinmin1234";
 
     private static Connection dbConnection = null;
 

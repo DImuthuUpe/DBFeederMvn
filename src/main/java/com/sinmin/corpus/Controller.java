@@ -120,11 +120,11 @@ public class Controller {
         if(fileTree==null){
             fileTree= new Folder("root",null);
         }
-        Scanner("/home/maduranga/crawler/data");
+        //Scanner("/home/maduranga/crawler/data");
+        Scanner("/Users/dimuthuupeksha/Documents/Academic/FYP/dataFolder/19");
     }
 
     public Controller(){
-        //Scanner("/Users/dimuthuupeksha/Documents/Academic/FYP/dataFolder");
     }
 
     public static void main(String args[]){
