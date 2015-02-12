@@ -1,3 +1,21 @@
+/*
+* Licensed to the Apache Software Foundation (ASF) under one
+* or more contributor license agreements.  See the NOTICE file
+* distributed with this work for additional information
+* regarding copyright ownership.  The ASF licenses this file
+* to you under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance
+* with the License.  You may obtain a copy of the License at
+*
+*   http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
 package com.sinmin.corpus.cassandra;
 
 import java.io.FileInputStream;
@@ -28,13 +46,16 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 
 import corpus.sinhala.SinhalaTokenizer;
+import org.apache.log4j.Logger;
 
 public class CassandraSizeClient {
+    final static Logger logger = Logger.getLogger(CassandraSizeClient.class);
+
 	private Cluster cluster;
 	private Session session;
-	PreparedStatement statement;
-	long wordcount,bigramcount,trigramcount;
-	SinhalaTokenizer tokenizer = new SinhalaTokenizer();
+	private PreparedStatement statement;
+	private long wordcount,bigramcount,trigramcount;
+	private SinhalaTokenizer tokenizer = new SinhalaTokenizer();
 
 	public void connect(String node) {
 		wordcount = 0;bigramcount=0;trigramcount=0;
@@ -86,17 +107,17 @@ public class CassandraSizeClient {
 				try {
 					yearInt = filterInt(year);
 				} catch (Exception e) {
-
+                    logger.error(e);
 				}
 				try {
 					dayInt = filterInt(day);
 				} catch (Exception e) {
-
+                    logger.error(e);
 				}
 				try {
 					monthInt = filterInt(month);
 				} catch (Exception e) {
-
+                    logger.error(e);
 				}
 				String timestamp = month + "/" + day + "/" + year;
 				DateFormat df = new SimpleDateFormat("mm/dd/yyyy");
@@ -104,8 +125,7 @@ public class CassandraSizeClient {
 				try {
 					date = df.parse(timestamp);
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+                    logger.error(e);
 				}
 				category = category.charAt(0) + "";
 				String[] sentences = this.splitToSentences(content);
@@ -115,9 +135,6 @@ public class CassandraSizeClient {
 					for (int j = 0; j < words.length; j++) {
 						wordCount++;
 					}
-					
-					
-					
 				}
 				
 				statement = session
@@ -184,13 +201,10 @@ public class CassandraSizeClient {
 							row.getInt("size") + wordCount, "ALL","ALL"));
 				}
 				
-				//System.out.println(topic);
-				
 			}
 			
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+            logger.error(e);
 		}
 
 	}
@@ -213,10 +227,10 @@ public class CassandraSizeClient {
 	}
 
 	public static void main(String[] args) {
-		CassandraClient cl = new CassandraClient();
+		/*CassandraClient cl = new CassandraClient();
 		cl.connect("127.0.0.1");
 		cl.feed("/home/chamila/semester7/fyp/20_Million_Words/out/1.xml");
-		System.out.println("dddddddd");
+		System.out.println("dddddddd");*/
 	}
 	
 	public int filterInt(String number){
@@ -252,17 +266,6 @@ public class CassandraSizeClient {
 	    }
 
 	    private String[] splitToWords(String sentence) {
-	        /*String raw[]= sentence.split("[\u0020\u002C]");
-	        ArrayList<String> w = new ArrayList<>();
-	        for (int i=0;i<raw.length;i++){
-	            String trimmed = unicodeTrim(raw[i]);
-	            if(trimmed!=null&&!trimmed.equals("")){
-	                w.add(trimmed);
-	            }
-	        }
-	        String newWords[] = new String[w.size()];
-	        newWords = w.toArray(newWords);
-	        return newWords;*/
 	        LinkedList<String> list = tokenizer.splitWords(sentence);
 	        String[] words = new String[list.size()];
 	        words = list.toArray(words);

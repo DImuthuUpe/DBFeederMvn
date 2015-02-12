@@ -1,3 +1,21 @@
+/*
+* Licensed to the Apache Software Foundation (ASF) under one
+* or more contributor license agreements.  See the NOTICE file
+* distributed with this work for additional information
+* regarding copyright ownership.  The ASF licenses this file
+* to you under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance
+* with the License.  You may obtain a copy of the License at
+*
+*   http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
 package com.sinmin.corpus.cassandra;
 
 import java.io.FileInputStream;
@@ -26,18 +44,20 @@ import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
-import com.datastax.driver.core.Statement;
 
 import corpus.sinhala.SinhalaTokenizer;
+import org.apache.log4j.Logger;
 
 
 public class CassandraClient {
 
+    final static Logger logger = Logger.getLogger(CassandraClient.class);
+
 	private Cluster cluster;
 	private Session session;
-	PreparedStatement statement;
-	long wordcount,bigramcount,trigramcount;
-	SinhalaTokenizer tokenizer = new SinhalaTokenizer();
+	private PreparedStatement statement;
+	private long wordcount,bigramcount,trigramcount;
+	private SinhalaTokenizer tokenizer = new SinhalaTokenizer();
 
 	public void connect(String node) {
 		wordcount = 0;bigramcount=0;trigramcount=0;
@@ -87,17 +107,17 @@ public class CassandraClient {
 				try {
 					yearInt = filterInt(year);
 				} catch (Exception e) {
-
+                    logger.error(e);
 				}
 				try {
 					dayInt = filterInt(day);
 				} catch (Exception e) {
-
+                    logger.error(e);
 				}
 				try {
 					monthInt = filterInt(month);
 				} catch (Exception e) {
-
+                    logger.error(e);
 				}
 				String timestamp = month + "/" + day + "/" + year;
 				DateFormat df = new SimpleDateFormat("mm/dd/yyyy");
@@ -105,8 +125,7 @@ public class CassandraClient {
 				try {
 					date = df.parse(timestamp);
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error(e);
 				}
 				category = category.charAt(0) + "";
 				String[] sentences = this.splitToSentences(content);
@@ -119,10 +138,8 @@ public class CassandraClient {
 									.prepare("select * from corpus.word_time_category_frequency WHERE word=? AND year=? AND category=?");
 							ResultSet results = session.execute(statement.bind(
 									words[j], yearInt, category));
-							// System.out.println("3 right");
 							Row row = results.one();
 							if (row == null) {
-								// System.out.println("4b");
 								statement = session
 										.prepare("INSERT INTO corpus.word_time_category_frequency(id, word, year, category, frequency) values (?,?,?,?,?)");
 								session.execute(statement.bind(wordcount, words[j],
@@ -132,9 +149,7 @@ public class CassandraClient {
 										.prepare("INSERT INTO corpus.word_time_category_ordered_frequency(id, word, year, category, frequency) values (?,?,?,?,?)");
 								session.execute(statement.bind(wordcount, words[j],
 										yearInt, category, 1));
-								// System.out.println("4b right");
 							} else {
-								// System.out.println("4a");
 								statement = session
 										.prepare("UPDATE corpus.word_time_category_frequency SET frequency = ? WHERE word=? AND year=? AND category=?");
 								session.execute(statement.bind(
@@ -150,7 +165,6 @@ public class CassandraClient {
 										.prepare("INSERT INTO corpus.word_time_category_ordered_frequency(id, word, year, category, frequency) values (?,?,?,?,?)");
 								session.execute(statement.bind(wordcount, words[j],
 										yearInt, category, row.getInt("frequency") + 1));
-								// System.out.println("4a right");
 							}
 							
 							// //////////////////////////////////////////////////////
@@ -158,24 +172,19 @@ public class CassandraClient {
 							statement = session
 									.prepare("select * from corpus.word_frequency WHERE word=?");
 							results = session.execute(statement.bind(words[j]));
-							// System.out.println("3 right");
 							row = results.one();
 							if (row == null) {
-								// System.out.println("4b");
 								statement = session
 										.prepare("INSERT INTO corpus.word_frequency(id, word,frequency) values (?,?,?)");
 								session.execute(statement.bind(wordcount, words[j],
 										1));
 								
-								// System.out.println("4b right");
 							} else {
-								// System.out.println("4a");
 								statement = session
 										.prepare("UPDATE corpus.word_frequency SET frequency = ? WHERE word=? ");
 								session.execute(statement.bind(
 										row.getInt("frequency") + 1, words[j]));
 								
-								// System.out.println("4a right");
 							}
 
 							// ///////////////////////////////////////////////////////////////
@@ -184,10 +193,8 @@ public class CassandraClient {
 									.prepare("select * from corpus.word_time_frequency WHERE word=? AND year=?");
 							results = session.execute(statement.bind(words[j],
 									yearInt));
-							// System.out.println("3 right");
 							row = results.one();
 							if (row == null) {
-								// System.out.println("4b");
 								statement = session
 										.prepare("INSERT INTO corpus.word_time_frequency(id, word,year,frequency) values (?,?,?,?)");
 								session.execute(statement.bind(wordcount, words[j],
@@ -198,9 +205,7 @@ public class CassandraClient {
 								session.execute(statement.bind(wordcount, words[j],
 										yearInt,  1));
 								
-								// System.out.println("4b right");
 							} else {
-								// System.out.println("4a");
 								statement = session
 										.prepare("UPDATE corpus.word_time_frequency SET frequency = ? WHERE word=? and year=?");
 								session.execute(statement.bind(
@@ -224,10 +229,8 @@ public class CassandraClient {
 									.prepare("select * from corpus.word_category_frequency WHERE word=? AND category=?");
 							results = session.execute(statement.bind(words[j],
 									category));
-							// System.out.println("3 right");
 							row = results.one();
 							if (row == null) {
-								// System.out.println("4b");
 								statement = session
 										.prepare("INSERT INTO corpus.word_category_frequency(id, word,category,frequency) values (?,?,?,?)");
 								session.execute(statement.bind(wordcount, words[j],
@@ -237,9 +240,7 @@ public class CassandraClient {
 										.prepare("INSERT INTO corpus.word_category_ordered_frequency(id, word, category, frequency) values (?,?,?,?)");
 								session.execute(statement.bind(wordcount, words[j],
 										category, 1));
-								// System.out.println("4b right");
 							} else {
-								// System.out.println("4a");
 								statement = session
 										.prepare("UPDATE corpus.word_category_frequency SET frequency = ? WHERE word=? and category=?");
 								session.execute(statement.bind(
@@ -278,10 +279,8 @@ public class CassandraClient {
 						    statement = session
 									.prepare("select * from corpus.word_pos_id WHERE word=? AND position=?");
 							results = session.execute(statement.bind(words[j],j));
-							// System.out.println("3 right");
 							row = results.one();
 							if (row == null) {
-								// System.out.println("4b");
 								statement = session
 										.prepare("INSERT INTO corpus.word_pos_frequency(id, word,position,frequency) values (?,?,?,?)");
 								session.execute(statement.bind(wordcount, words[j],j,1));
@@ -291,7 +290,6 @@ public class CassandraClient {
 								session.execute(statement.bind(wordcount, words[j],j,1));
 
 							} else {
-								// System.out.println("4a");
 								statement = session
 										.prepare("UPDATE corpus.word_pos_id SET frequency = ? WHERE word=? AND position=?");
 								session.execute(statement.bind(row.getInt("frequency") + 1, words[j],j));
@@ -309,10 +307,8 @@ public class CassandraClient {
 							statement = session
 									.prepare("select * from corpus.word_inv_pos_id WHERE word=? AND inv_position=?");
 							results = session.execute(statement.bind(words[j],words.length-1-j));
-							// System.out.println("3 right");
 							row = results.one();
 							if (row == null) {
-								// System.out.println("4b");
 								statement = session
 										.prepare("INSERT INTO corpus.word_inv_pos_frequency(id, word,inv_position,frequency) values (?,?,?,?)");
 								session.execute(statement.bind(wordcount, words[j],words.length-1-j,1));
@@ -322,7 +318,6 @@ public class CassandraClient {
 								session.execute(statement.bind(wordcount, words[j],words.length-1-j,1));
 
 							} else {
-								// System.out.println("4a");
 								statement = session
 										.prepare("UPDATE corpus.word_inv_pos_id SET frequency = ? WHERE word=? AND inv_position=?");
 								session.execute(statement.bind(row.getInt("frequency") + 1, words[j],words.length-1-j));
@@ -342,10 +337,8 @@ public class CassandraClient {
 							statement = session
 									.prepare("select * from corpus.word_pos_year_id WHERE word=? AND position=? AND year=?");
 							results = session.execute(statement.bind(words[j],j,yearInt));
-							// System.out.println("3 right");
 							row = results.one();
 							if (row == null) {
-								// System.out.println("4b");
 								statement = session
 										.prepare("INSERT INTO corpus.word_pos_year_frequency(id, word,position,frequency,year) values (?,?,?,?,?)");
 								session.execute(statement.bind(wordcount, words[j],j,1,yearInt));
@@ -355,7 +348,6 @@ public class CassandraClient {
 								session.execute(statement.bind(wordcount, words[j],j,1,yearInt));
 
 							} else {
-								// System.out.println("4a");
 								statement = session
 										.prepare("UPDATE corpus.word_pos_year_id SET frequency = ? WHERE word=? AND position=? AND year=?");
 								session.execute(statement.bind(row.getInt("frequency") + 1, words[j],j,yearInt));
@@ -373,10 +365,8 @@ public class CassandraClient {
 							statement = session
 									.prepare("select * from corpus.word_inv_pos_year_id WHERE word=? AND inv_position=? AND year=?");
 							results = session.execute(statement.bind(words[j],words.length-1-j,yearInt));
-							// System.out.println("3 right");
 							row = results.one();
 							if (row == null) {
-								// System.out.println("4b");
 								statement = session
 										.prepare("INSERT INTO corpus.word_inv_pos_year_frequency(id, word,inv_position,frequency,year) values (?,?,?,?,?)");
 								session.execute(statement.bind(wordcount, words[j],words.length-1-j,1,yearInt));
@@ -386,7 +376,6 @@ public class CassandraClient {
 								session.execute(statement.bind(wordcount, words[j],words.length-1-j,1,yearInt));
 
 							} else {
-								// System.out.println("4a");
 								statement = session
 										.prepare("UPDATE corpus.word_inv_pos_year_id SET frequency = ? WHERE word=? AND inv_position=? AND year=?");
 								session.execute(statement.bind(row.getInt("frequency") + 1, words[j],words.length-1-j,yearInt));
@@ -398,7 +387,6 @@ public class CassandraClient {
 								statement = session
 										.prepare("INSERT INTO corpus.word_inv_pos_year_frequency(id, word, inv_position, frequency,year) values (?,?,?,?,?)");
 								session.execute(statement.bind(wordcount, words[j],words.length-1-j, row.getInt("frequency") + 1,yearInt));
-
 							}
 							
 							
@@ -407,10 +395,8 @@ public class CassandraClient {
 							statement = session
 									.prepare("select * from corpus.word_pos_category_id WHERE word=? AND position=? AND category=?");
 							results = session.execute(statement.bind(words[j],j,category));
-							// System.out.println("3 right");
 							row = results.one();
 							if (row == null) {
-								// System.out.println("4b");
 								statement = session
 										.prepare("INSERT INTO corpus.word_pos_category_frequency(id, word,position,frequency,category) values (?,?,?,?,?)");
 								session.execute(statement.bind(wordcount, words[j],j,1,category));
@@ -420,7 +406,6 @@ public class CassandraClient {
 								session.execute(statement.bind(wordcount, words[j],j,1,category));
 
 							} else {
-								// System.out.println("4a");
 								statement = session
 										.prepare("UPDATE corpus.word_pos_category_id SET frequency = ? WHERE word=? AND position=? AND category=?");
 								session.execute(statement.bind(row.getInt("frequency") + 1, words[j],j,category));
@@ -438,10 +423,8 @@ public class CassandraClient {
 							statement = session
 									.prepare("select * from corpus.word_inv_pos_category_id WHERE word=? AND inv_position=? AND category=?");
 							results = session.execute(statement.bind(words[j],words.length-1-j,category));
-							// System.out.println("3 right");
 							row = results.one();
 							if (row == null) {
-								// System.out.println("4b");
 								statement = session
 										.prepare("INSERT INTO corpus.word_inv_pos_category_frequency(id, word,inv_position,frequency,category) values (?,?,?,?,?)");
 								session.execute(statement.bind(wordcount, words[j],words.length-1-j,1,category));
@@ -451,7 +434,6 @@ public class CassandraClient {
 								session.execute(statement.bind(wordcount, words[j],words.length-1-j,1,category));
 
 							} else {
-								// System.out.println("4a");
 								statement = session
 										.prepare("UPDATE corpus.word_inv_pos_category_id SET frequency = ? WHERE word=? AND inv_position=? AND category=?");
 								session.execute(statement.bind(row.getInt("frequency") + 1, words[j],words.length-1-j,category));
@@ -472,10 +454,8 @@ public class CassandraClient {
 							statement = session
 									.prepare("select * from corpus.word_pos_year_category_id WHERE word=? AND position=? AND category=? AND year=?");
 							results = session.execute(statement.bind(words[j],j,category,yearInt));
-							// System.out.println("3 right");
 							row = results.one();
 							if (row == null) {
-								// System.out.println("4b");
 								statement = session
 										.prepare("INSERT INTO corpus.word_pos_year_category_frequency(id, word,position,frequency,category,year) values (?,?,?,?,?,?)");
 								session.execute(statement.bind(wordcount, words[j],j,1,category,yearInt));
@@ -485,7 +465,6 @@ public class CassandraClient {
 								session.execute(statement.bind(wordcount, words[j],j,1,category,yearInt));
 
 							} else {
-								// System.out.println("4a");
 								statement = session
 										.prepare("UPDATE corpus.word_pos_year_category_id SET frequency = ? WHERE word=? AND position=? AND category=? AND year=?");
 								session.execute(statement.bind(row.getInt("frequency") + 1, words[j],j,category,yearInt));
@@ -503,10 +482,8 @@ public class CassandraClient {
 							statement = session
 									.prepare("select * from corpus.word_inv_pos_year_category_id WHERE word=? AND inv_position=? AND category=? AND year=?");
 							results = session.execute(statement.bind(words[j],words.length-1-j,category,yearInt));
-							// System.out.println("3 right");
 							row = results.one();
 							if (row == null) {
-								// System.out.println("4b");
 								statement = session
 										.prepare("INSERT INTO corpus.word_inv_pos_year_category_frequency(id, word,inv_position,frequency,category,year) values (?,?,?,?,?,?)");
 								session.execute(statement.bind(wordcount, words[j],words.length-1-j,1,category,yearInt));
@@ -516,7 +493,6 @@ public class CassandraClient {
 								session.execute(statement.bind(wordcount, words[j],words.length-1-j,1,category,yearInt));
 
 							} else {
-								// System.out.println("4a");
 								statement = session
 										.prepare("UPDATE corpus.word_inv_pos_year_category_id SET frequency = ? WHERE word=? AND inv_position=? AND category=? AND year=?");
 								session.execute(statement.bind(row.getInt("frequency") + 1, words[j],words.length-1-j,category,yearInt));
@@ -543,10 +519,8 @@ public class CassandraClient {
 									.prepare("select * from corpus.bigram_time_category_frequency WHERE word1=? AND word2=? AND year=? AND category=?");
 							ResultSet results = session.execute(statement.bind(
 									words[j], words[j + 1], yearInt, category));
-							// System.out.println("3 right");
 							Row row = results.one();
 							if (row == null) {
-								// System.out.println("4b");
 								statement = session
 										.prepare("INSERT INTO corpus.bigram_time_category_frequency(id, word1, word2, year, category, frequency) values (?,?,?,?,?,?)");
 								session.execute(statement.bind(bigramcount, words[j],
@@ -558,7 +532,6 @@ public class CassandraClient {
 										yearInt, category, 1));
 								
 							} else {
-								// System.out.println("4a");
 								statement = session
 										.prepare("UPDATE corpus.bigram_time_category_frequency SET frequency = ? WHERE word1=? AND word2=? AND year=? AND category=?");
 								session.execute(statement.bind(
@@ -582,23 +555,18 @@ public class CassandraClient {
 									.prepare("select * from corpus.bigram_frequency WHERE word1=? AND word2=?");
 							results = session.execute(statement.bind(words[j],
 									words[j + 1]));
-							// System.out.println("3 right");
 							row = results.one();
 							if (row == null) {
-								// System.out.println("4b");
 								statement = session
 										.prepare("INSERT INTO corpus.bigram_frequency(id, word1,word2,frequency) values (?,?,?,?)");
 								session.execute(statement.bind(bigramcount, words[j],
 										words[j + 1], 1));
-								// System.out.println("4b right");
 							} else {
-								// System.out.println("4a");
 								statement = session
 										.prepare("UPDATE corpus.bigram_frequency SET frequency = ? WHERE word1=? AND word2=?");
 								session.execute(statement.bind(
 										row.getInt("frequency") + 1, words[j],
 										words[j + 1]));
-								// System.out.println("4a right");
 							}
 
 							// //////////////////////////////////////////
@@ -607,10 +575,8 @@ public class CassandraClient {
 									.prepare("select * from corpus.bigram_time_frequency WHERE word1=? AND word2=? AND year=?");
 							results = session.execute(statement.bind(words[j],
 									words[j + 1], yearInt));
-							// System.out.println("3 right");
 							row = results.one();
 							if (row == null) {
-								// System.out.println("4b");
 								statement = session
 										.prepare("INSERT INTO corpus.bigram_time_frequency(id, word1,word2,year,frequency) values (?,?,?,?,?)");
 								session.execute(statement.bind(bigramcount, words[j],
@@ -622,7 +588,6 @@ public class CassandraClient {
 										yearInt,  1));
 
 							} else {
-								// System.out.println("4a");
 								statement = session
 										.prepare("UPDATE corpus.bigram_time_frequency SET frequency = ? WHERE word1=? AND word2=? AND year=?");
 								session.execute(statement.bind(
@@ -647,10 +612,8 @@ public class CassandraClient {
 									.prepare("select * from corpus.bigram_category_frequency WHERE word1=? AND word2=? AND category=?");
 							results = session.execute(statement.bind(words[j],
 									words[j + 1], category));
-							// System.out.println("3 right");
 							row = results.one();
 							if (row == null) {
-								// System.out.println("4b");
 								statement = session
 										.prepare("INSERT INTO corpus.bigram_category_frequency(id, word1,word2,category,frequency) values (?,?,?,?,?)");
 								session.execute(statement.bind(bigramcount, words[j],
@@ -662,7 +625,6 @@ public class CassandraClient {
 										category, 1));
 
 							} else {
-								// System.out.println("4a");
 								statement = session
 										.prepare("UPDATE corpus.bigram_category_frequency SET frequency = ? WHERE word1=? AND word2=? and category=?");
 								session.execute(statement.bind(
@@ -709,10 +671,8 @@ public class CassandraClient {
 									.prepare("select * from corpus.trigram_time_category_frequency WHERE word1=? AND word2=? AND word3=? AND year=? AND category=?");
 							ResultSet results = session.execute(statement.bind(
 									words[j], words[j + 1],words[j+2], yearInt, category));
-							// System.out.println("3 right");
 							Row row = results.one();
 							if (row == null) {
-								// System.out.println("4b");
 								statement = session
 										.prepare("INSERT INTO corpus.trigram_time_category_frequency(id, word1, word2, word3, year, category, frequency) values (?,?,?,?,?,?,?)");
 								session.execute(statement.bind(trigramcount, words[j],	words[j + 1], words[j+2],yearInt, category, 1));
@@ -723,7 +683,6 @@ public class CassandraClient {
 										yearInt, category, 1));
 								
 							} else {
-								// System.out.println("4a");
 								statement = session
 										.prepare("UPDATE corpus.trigram_time_category_frequency SET frequency = ? WHERE word1=? AND word2=? AND word3=? AND year=? AND category=?");
 								session.execute(statement.bind(
@@ -749,23 +708,18 @@ public class CassandraClient {
 									.prepare("select * from corpus.trigram_frequency WHERE word1=? AND word2=? AND word3=?");
 							results = session.execute(statement.bind(words[j],
 									words[j + 1],words[j+2]));
-							// System.out.println("3 right");
 							row = results.one();
 							if (row == null) {
-								// System.out.println("4b");
 								statement = session
 										.prepare("INSERT INTO corpus.trigram_frequency(id, word1,word2,word3,frequency) values (?,?,?,?,?)");
 								session.execute(statement.bind(trigramcount, words[j],
 										words[j + 1],words[j+2], 1));
-								// System.out.println("4b right");
 							} else {
-								// System.out.println("4a");
 								statement = session
 										.prepare("UPDATE corpus.trigram_frequency SET frequency = ? WHERE word1=? AND word2=? AND word3=?");
 								session.execute(statement.bind(
 										row.getInt("frequency") + 1, words[j],
 										words[j + 1],words[j+2]));
-								// System.out.println("4a right");
 							}
 							
 							///////////////////////////////////////////
@@ -774,10 +728,8 @@ public class CassandraClient {
 									.prepare("select * from corpus.trigram_time_frequency WHERE word1=? AND word2=? AND word3=? AND year=?");
 							results = session.execute(statement.bind(words[j],
 									words[j + 1], words[j+2], yearInt));
-							// System.out.println("3 right");
 							row = results.one();
 							if (row == null) {
-								// System.out.println("4b");
 								statement = session
 										.prepare("INSERT INTO corpus.trigram_time_frequency(id, word1,word2,word3,year,frequency) values (?,?,?,?,?,?)");
 								session.execute(statement.bind(trigramcount, words[j],
@@ -789,7 +741,6 @@ public class CassandraClient {
 										yearInt,  1));
 								
 							} else {
-								// System.out.println("4a");
 								statement = session
 										.prepare("UPDATE corpus.trigram_time_frequency SET frequency = ? WHERE word1=? AND word2=? AND word3=? AND year=?");
 								session.execute(statement.bind(
@@ -814,10 +765,8 @@ public class CassandraClient {
 									.prepare("select * from corpus.trigram_category_frequency WHERE word1=? AND word2=? AND word3=? AND category=?");
 							results = session.execute(statement.bind(words[j],
 									words[j + 1],words[j+2], category));
-							// System.out.println("3 right");
 							row = results.one();
 							if (row == null) {
-								// System.out.println("4b");
 								statement = session
 										.prepare("INSERT INTO corpus.trigram_category_frequency(id, word1,word2,word3,category,frequency) values (?,?,?,?,?,?)");
 								session.execute(statement.bind(trigramcount, words[j],
@@ -829,7 +778,6 @@ public class CassandraClient {
 										category, 1));
 								
 							} else {
-								// System.out.println("4a");
 								statement = session
 										.prepare("UPDATE corpus.trigram_category_frequency SET frequency = ? WHERE word1=? AND word2=? AND word3=? and category=?");
 								session.execute(statement.bind(
@@ -863,8 +811,6 @@ public class CassandraClient {
 						    statement= session.prepare(
 									"INSERT INTO corpus.trigram_year_category_usage (id, word1,word2,word3, sentence, postname, year, category, date, url, author) values (?,?,?,?,?,?,?,?,?,?,?)");
 						    session.execute(statement.bind(trigramcount,words[j],words[j+1],words[j+2],sentences[i],topic,yearInt, category,date,link,author));
-							
-							
 							trigramcount++;
 						}
 					}
@@ -875,8 +821,7 @@ public class CassandraClient {
 			}System.out.println(wordcount );
 			
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+            logger.error(e);
 		}
 
 	}
@@ -938,17 +883,6 @@ public class CassandraClient {
 	    }
 
 	    private String[] splitToWords(String sentence) {
-	        /*String raw[]= sentence.split("[\u0020\u002C]");
-	        ArrayList<String> w = new ArrayList<>();
-	        for (int i=0;i<raw.length;i++){
-	            String trimmed = unicodeTrim(raw[i]);
-	            if(trimmed!=null&&!trimmed.equals("")){
-	                w.add(trimmed);
-	            }
-	        }
-	        String newWords[] = new String[w.size()];
-	        newWords = w.toArray(newWords);
-	        return newWords;*/
 	        LinkedList<String> list = tokenizer.splitWords(sentence);
 	        String[] words = new String[list.size()];
 	        words = list.toArray(words);

@@ -1,6 +1,24 @@
+/*
+* Licensed to the Apache Software Foundation (ASF) under one
+* or more contributor license agreements.  See the NOTICE file
+* distributed with this work for additional information
+* regarding copyright ownership.  The ASF licenses this file
+* to you under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance
+* with the License.  You may obtain a copy of the License at
+*
+*   http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
 package com.sinmin.corpus.oracle;
 
-
+import com.sinmin.corpus.ConfigManager;
 import com.sinmin.corpus.oracle.bean.ArticleBean;
 import com.sinmin.corpus.oracle.bean.Bigram;
 import com.sinmin.corpus.oracle.bean.SentenceBean;
@@ -34,15 +52,6 @@ import java.util.regex.Pattern;
 public class PLSQLClient {
     final static Logger logger = Logger.getLogger(PLSQLClient.class);
 
-    private static final String DB_DRIVER = "oracle.jdbc.driver.OracleDriver";
-    private static final String DB_CONNECTION = "jdbc:oracle:thin:@//localhost:1521/PDB1";
-    private static final String DB_USER = "sinmin";
-    private static final String DB_PASSWORD = "sinmin";
-
-    //private static final String DB_CONNECTION = "jdbc:oracle:thin:@//192.248.15.239:1522/corpus.sinmin.com";
-    //private static final String DB_USER = "sinmin";
-    //private static final String DB_PASSWORD = "Sinmin1234";
-
     private static Connection dbConnection = null;
 
     ArrayList<ArticleBean> articles = null;
@@ -56,8 +65,10 @@ public class PLSQLClient {
 
         if (dbConnection == null) {
             try {
-                dbConnection = DriverManager.getConnection(
-                        DB_CONNECTION, DB_USER, DB_PASSWORD);
+                String dbConn = ConfigManager.getProperty(ConfigManager.ORACLE_DB_CONNECTION);
+                String dbUser = ConfigManager.getProperty(ConfigManager.ORACLE_DB_USER);
+                String dbPass = ConfigManager.getProperty(ConfigManager.ORACLE_DB_PASSWORD);
+                dbConnection = DriverManager.getConnection(dbConn, dbUser, dbPass);
                 return dbConnection;
             } catch (SQLException e) {
                 logger.error(e.getMessage());
@@ -191,16 +202,8 @@ public class PLSQLClient {
                 bean.topic = topic;
                 bean.category = category;
                 bean.link = link;
-                /*System.out.println("year : "+year);
-                System.out.println("month : "+month);
-                System.out.println("day : "+day);
-                System.out.println("author : "+author);
-                System.out.println("topic : "+topic);
-                System.out.println("cat : "+category);
-                System.out.println("link : "+link);*/
 
                 for (int s = 0; s < sents.length; s++) {
-                    //System.out.println(sents[s]);
                     SentenceBean sbean = new SentenceBean();
                     sbean.sentence = sents[s];
                     bean.sentences.add(sbean);
@@ -228,17 +231,6 @@ public class PLSQLClient {
     }
 
     private String[] splitToWords(String sentence) {
-        /*String raw[]= sentence.split("[\u0020\u002C]");
-        ArrayList<String> w = new ArrayList<>();
-        for (int i=0;i<raw.length;i++){
-            String trimmed = unicodeTrim(raw[i]);
-            if(trimmed!=null&&!trimmed.equals("")){
-                w.add(trimmed);
-            }
-        }
-        String newWords[] = new String[w.size()];
-        newWords = w.toArray(newWords);
-        return newWords;*/
         LinkedList<String> list = tokenizer.splitWords(sentence);
         String[] words = new String[list.size()];
         words = list.toArray(words);
@@ -284,14 +276,10 @@ public class PLSQLClient {
             word_id_map.put(newWords[i], ids[i].longValue());
         }
         logger.info("Words " + wordlist.length);
-        //System.out.println(ids.length);
-        //System.out.println(missingWords.size());
     }
 
     public BigDecimal[] getBigramIDList(long bigramList[][]) throws SQLException {
         getDBConnection();
-
-        logger.info("Mark 1");
 
         long[] array1 = new long[bigramList.length];
         long[] array2 = new long[bigramList.length];
@@ -300,30 +288,22 @@ public class PLSQLClient {
             array1[i] = bigramList[i][0];
             array2[i] = bigramList[i][1];
         }
-        logger.info("Mark 2");
         OracleCallableStatement stmt = (OracleCallableStatement) dbConnection.prepareCall("begin ? := getBigrams(?,?); end;");
         stmt.registerOutParameter(1, OracleTypes.ARRAY, "IDARRAY");
 
-        logger.info("Mark 2");
         ArrayDescriptor desc = ArrayDescriptor.createDescriptor("NUM_ARRAY", dbConnection);
         ARRAY wordArray1 = new ARRAY(desc, dbConnection, array1);
         ARRAY wordArray2 = new ARRAY(desc, dbConnection, array2);
         stmt.setArray(2, wordArray1);
         stmt.setArray(3, wordArray2);
         BigDecimal[] values;
-        logger.info("Mark 3");
         try{
             stmt.executeUpdate();
-            logger.info("Mark 4");
             ARRAY output = stmt.getARRAY(1);
-            logger.info("Mark 5");
             values = (BigDecimal[]) output.getArray();
-            logger.info("Mark 6");
         }finally{
             stmt.close();
         }
-        logger.info("Mark 7");
-        //dbConnection.close();
         return values;
 
     }
@@ -388,12 +368,9 @@ public class PLSQLClient {
 
             BigDecimal[] values = (BigDecimal[]) output.getArray();
 
-            //for (int i = 0; i < values.length; i++)
-            //System.out.println("val " + wordList[i] + " = '" + values[i] + "'");
         }finally{
             stmt.close();
         }
-        //dbConnection.close();
     }
 
     public long[][] getAllBigrams() {
@@ -430,8 +407,6 @@ public class PLSQLClient {
             } else {
                 Bigram bi = new Bigram(bigrams[i][0], bigrams[i][1]);
                 bigram_map.put(bi, ids[i].longValue());
-                // System.out.println(bi.id1+","+bi.id2+","+bi.hashCode());
-
             }
         }
         logger.info("step 2");
@@ -446,7 +421,6 @@ public class PLSQLClient {
         }
         logger.info("step 5");
         logger.info("Bigrams created");
-        //System.out.println(bigrams.length+","+missingBigrams.size());
     }
 
     public void addTrigrams(Trigram trigramList[]) throws SQLException {
@@ -483,7 +457,6 @@ public class PLSQLClient {
         }finally{
             stmt.close();
         }
-        //dbConnection.close();
     }
 
     public BigDecimal[] getTrigramIDList(long trigramList[][]) throws SQLException {
@@ -589,8 +562,6 @@ public class PLSQLClient {
             } else {
                 Trigram ti = new Trigram(trigrams[i][0], trigrams[i][1], trigrams[i][2]);
                 trigram_map.put(ti, ids[i].longValue());
-                // System.out.println(bi.id1+","+bi.id2+","+bi.hashCode());
-
             }
         }
         Trigram[] newTrigrams = new Trigram[missingTrigrams.size()];
@@ -601,7 +572,6 @@ public class PLSQLClient {
             trigram_map.put(newTrigrams[i], ids[i].longValue());
         }
         logger.info("Triigrams created");
-        //System.out.println(bigrams.length+","+missingBigrams.size());
     }
 
     private String[] fetchDate(String dateString) {
@@ -957,19 +927,11 @@ public class PLSQLClient {
             out.flush();
             out.close();
             //runQueries(i+"");
-
-
             //flushCache();
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
             logger.error(ex);
         }
-        /*Set<Long> keySet = times.keySet();
-        Iterator<Long> it = keySet.iterator();
-        while(it.hasNext()){
-            Long key = it.next();
-            System.out.println(key+" : "+times.get(key));
-        }*/
     }
 
     public static void main(String args[]) {
