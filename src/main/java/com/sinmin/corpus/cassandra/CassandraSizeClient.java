@@ -46,6 +46,7 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 
 import corpus.sinhala.SinhalaTokenizer;
+
 import org.apache.log4j.Logger;
 
 public class CassandraSizeClient {
@@ -57,9 +58,9 @@ public class CassandraSizeClient {
 	private long wordcount,bigramcount,trigramcount;
 	private SinhalaTokenizer tokenizer = new SinhalaTokenizer();
 
-	public void connect(String node) {
+	public void connect(String node,String uname,String pwd) {
 		wordcount = 0;bigramcount=0;trigramcount=0;
-		cluster = Cluster.builder().addContactPoint(node).build();
+		cluster = Cluster.builder().addContactPoint(node).withCredentials(uname, pwd).build();
 		Metadata metadata = cluster.getMetadata();
 		System.out.printf("Connected to cluster: %s\n",
 				metadata.getClusterName());

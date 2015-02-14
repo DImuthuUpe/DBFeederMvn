@@ -36,9 +36,9 @@ public class CassandraSizeClient2 {
 	long wordcount,bigramcount,trigramcount;
 	SinhalaTokenizer tokenizer = new SinhalaTokenizer();
 
-	public void connect(String node) {
+	public void connect(String node,String uname,String pwd) {
 		wordcount = 0;bigramcount=0;trigramcount=0;
-		cluster = Cluster.builder().addContactPoint(node).build();
+		cluster = Cluster.builder().addContactPoint(node).withCredentials(uname, pwd).build();
 		Metadata metadata = cluster.getMetadata();
 		System.out.printf("Connected to cluster: %s\n",
 				metadata.getClusterName());
@@ -284,7 +284,7 @@ public class CassandraSizeClient2 {
 
 	public static void main(String[] args) {
 		CassandraClient cl = new CassandraClient();
-		cl.connect("127.0.0.1");
+		//cl.connect("127.0.0.1");
 		cl.feed("/home/chamila/semester7/fyp/20_Million_Words/out/1.xml");
 		System.out.println("dddddddd");
 	}
