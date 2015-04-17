@@ -46,6 +46,7 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 
 import corpus.sinhala.SinhalaTokenizer;
+
 import org.apache.log4j.Logger;
 
 
@@ -101,25 +102,25 @@ public class CassandraClient {
 						new QName("category")).getText();
 
 				int yearInt = 0;
-				int dayInt = 0;
-				int monthInt = 0;
+				int dayInt = 1;
+				int monthInt = 1;
 
 				try {
 					yearInt = filterInt(year);
 				} catch (Exception e) {
-                    logger.error(e);
+
 				}
 				try {
 					dayInt = filterInt(day);
 				} catch (Exception e) {
-                    logger.error(e);
+					dayInt = 1;
 				}
 				try {
 					monthInt = filterInt(month);
 				} catch (Exception e) {
-                    logger.error(e);
+					monthInt = 1;
 				}
-				String timestamp = month + "/" + day + "/" + year;
+				String timestamp = monthInt + "/" + dayInt + "/" + yearInt;
 				DateFormat df = new SimpleDateFormat("mm/dd/yyyy");
 				Date date = null;
 				try {

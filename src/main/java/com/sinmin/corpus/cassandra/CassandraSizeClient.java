@@ -108,19 +108,19 @@ public class CassandraSizeClient {
 				try {
 					yearInt = filterInt(year);
 				} catch (Exception e) {
-                    logger.error(e);
+
 				}
 				try {
 					dayInt = filterInt(day);
 				} catch (Exception e) {
-                    logger.error(e);
+					dayInt = 1;
 				}
 				try {
 					monthInt = filterInt(month);
 				} catch (Exception e) {
-                    logger.error(e);
+					monthInt = 1;
 				}
-				String timestamp = month + "/" + day + "/" + year;
+				String timestamp = monthInt + "/" + dayInt + "/" + yearInt;
 				DateFormat df = new SimpleDateFormat("mm/dd/yyyy");
 				Date date = null;
 				try {

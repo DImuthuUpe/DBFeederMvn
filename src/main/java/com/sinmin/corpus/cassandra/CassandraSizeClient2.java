@@ -91,14 +91,14 @@ public class CassandraSizeClient2 {
 				try {
 					dayInt = filterInt(day);
 				} catch (Exception e) {
-
+					dayInt = 1;
 				}
 				try {
 					monthInt = filterInt(month);
 				} catch (Exception e) {
-
+					monthInt = 1;
 				}
-				String timestamp = month + "/" + day + "/" + year;
+				String timestamp = monthInt + "/" + dayInt + "/" + yearInt;
 				DateFormat df = new SimpleDateFormat("mm/dd/yyyy");
 				Date date = null;
 				try {
@@ -283,10 +283,7 @@ public class CassandraSizeClient2 {
 	}
 
 	public static void main(String[] args) {
-		CassandraClient cl = new CassandraClient();
-		//cl.connect("127.0.0.1");
-		cl.feed("/home/chamila/semester7/fyp/20_Million_Words/out/1.xml");
-		System.out.println("dddddddd");
+		
 	}
 	
 	public int filterInt(String number){
@@ -322,18 +319,8 @@ public class CassandraSizeClient2 {
 	    }
 
 	    private String[] splitToWords(String sentence) {
-	        /*String raw[]= sentence.split("[\u0020\u002C]");
-	        ArrayList<String> w = new ArrayList<>();
-	        for (int i=0;i<raw.length;i++){
-	            String trimmed = unicodeTrim(raw[i]);
-	            if(trimmed!=null&&!trimmed.equals("")){
-	                w.add(trimmed);
-	            }
-	        }
-	        String newWords[] = new String[w.size()];
-	        newWords = w.toArray(newWords);
-	        return newWords;*/
-	        LinkedList<String> list = tokenizer.splitWords(sentence);
+	        
+	    	LinkedList<String> list = tokenizer.splitWords(sentence);
 	        String[] words = new String[list.size()];
 	        words = list.toArray(words);
 	        return words;
